@@ -17,11 +17,20 @@ module.exports = {
     },
     {
       name: '@electron-forge/maker-deb',
-      config: {},
+      config: {
+        options: {
+          maintainer: 'CookieJAR499',
+          homepage: 'https://packwizgui.cookiejar499.me'
+        }
+      },
     },
     {
       name: '@electron-forge/maker-rpm',
-      config: {},
+      config: {
+        options: {
+          homepage: 'https://packwizgui.cookiejar499.me'
+        }
+      },
     },
   ],
   plugins: [
