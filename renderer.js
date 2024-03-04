@@ -1,8 +1,8 @@
-const logger = require('./utils/logger').createNewLogger('renderer', 'root')
+//const logger = require('./utils/logger').createNewLogger('renderer', 'root')
 
 const func = async () => {
     const response = await window.versions.ping()
-    logger.debug(response) // prints out 'pong'
+    //logger.debug(response) // prints out 'pong'
 }
 
 const updateOnlineStatus = () => {

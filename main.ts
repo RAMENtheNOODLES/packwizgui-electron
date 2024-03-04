@@ -1,13 +1,14 @@
-import { app, BrowserWindow, ipcMain , screen, protocol} from 'electron'
-const logger = require('./utils/logger').createNewLogger('config-parser')
+import { app, BrowserWindow, ipcMain , screen} from 'electron'
+const logger = require('./utils/logger').createNewLogger()
 
 if (require('electron-squirrel-startup')) app.quit()
 
-import path from 'node:path'
+//@ts-nocheck
+const path = require('node:path')
 
-import { showNotification, showNotificationWindow } from './utils/notification_engine'
+import { showNotification } from './utils/notification_engine'
 
-import getConfigFile from './utils/config-parser'
+import {getConfigFile} from './utils/config-parser'
 import * as Electron from "electron";
 
 export default class Main {
@@ -21,18 +22,20 @@ export default class Main {
     }
 
     private static createWindow(width: number, height: number) {
+        logger.info(`Preload path: ${path.join(__dirname, 'preload.js')}`)
         Main.mainWindow = new Main.BrowserWindow({
             width: width,
             height: height,
             webPreferences: {
-                preload: path.join(__dirname, 'preload.js')
+                preload: path.join(__dirname, 'preload.js'),
+                nodeIntegration: true
             }
         })
 
         Main.mainWindow.loadFile('index.html')
     }
 
-    private static handleSetStatus(event: any, status: boolean) {
+    private static handleSetStatus(_event: any, status: boolean) {
         logger.info(`Status: ${status ? "online" : "offline"}`)
         Main.OnlineStatus = status
 
@@ -63,10 +66,6 @@ export default class Main {
         })
 
         ipcMain.on('status', Main.handleSetStatus)
-    }
-
-    private static onClose() {
-        //Main.mainWindow = null;
     }
 
     static main(app: Electron.App, browserWindow: typeof BrowserWindow) {

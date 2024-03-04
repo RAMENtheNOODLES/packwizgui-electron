@@ -140,7 +140,7 @@ export function writeToConfigFile(config: ConfigFile = new ConfigFile()): Config
     return config;
 }
 
-export default function getConfigFile(): ConfigFile {
+export function getConfigFile(): ConfigFile {
     fs.readFile(`./${configFileName}`, 'utf-8', (err: any, data: any) => {
         if (err) {
             logger.error(err)
@@ -150,9 +150,9 @@ export default function getConfigFile(): ConfigFile {
 
         try {
             let config: ConfigFile = ConfigFile.fromString(data);
-            logger.debug(`Project Dir: ${config.project_dir}`)
-            logger.debug(`Packwiz file: ${config.packwiz_exe_file}`)
-            logger.debug(`Project Version: ${config.project_version.toString()}`)
+            logger.info(`Project Dir: ${config.project_dir}`)
+            logger.info(`Packwiz file: ${config.packwiz_exe_file}`)
+            logger.info(`Project Version: ${config.project_version.toString()}`)
             return config;
         } catch (e: any) {
             logger.error(e)
