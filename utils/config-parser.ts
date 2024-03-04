@@ -126,38 +126,33 @@ export class ConfigFile {
 export function writeToConfigFile(): ConfigFile;
 export function writeToConfigFile(config: ConfigFile): ConfigFile;
 export function writeToConfigFile(config: ConfigFile = new ConfigFile()): ConfigFile {
-    fs.writeFile(`./${configFileName}`,
-        config.toString(),
-        {flag: 'w'},
-        err => {
-            if (err) {
-                logger.error(err);
-                return new ConfigFile();
-            } else {
-                logger.info("Successfully wrote to the config file!")
-            }
-        })
+    try {
+        fs.writeFileSync(`./${configFileName}`,
+            config.toString(),
+            {flag: 'w'})
+        logger.info("Successfully wrote to the config file!")
+    } catch (e) {
+        logger.error(e);
+        return new ConfigFile();
+    }
     return config;
 }
 
-export function getConfigFile(): ConfigFile {
-    fs.readFile(`./${configFileName}`, 'utf-8', (err: any, data: any) => {
-        if (err) {
-            logger.error(err)
-            return writeToConfigFile()
-        }
+export function getConfigFile(): ConfigFile|undefined {
+    try {
+        const data = fs.readFileSync(`./${configFileName}`, 'utf-8')
+
+        logger.info(`Config file data: ${data}`)
+
         logger.debug(data)
 
-        try {
-            let config: ConfigFile = ConfigFile.fromString(data);
-            logger.info(`Project Dir: ${config.project_dir}`)
-            logger.info(`Packwiz file: ${config.packwiz_exe_file}`)
-            logger.info(`Project Version: ${config.project_version.toString()}`)
-            return config;
-        } catch (e: any) {
-            logger.error(e)
-            return writeToConfigFile();
-        }
-    })
-    return new ConfigFile();
+        let config: ConfigFile = ConfigFile.fromString(data);
+        logger.info(`Project Dir: ${config.project_dir}`)
+        logger.info(`Packwiz file: ${config.packwiz_exe_file}`)
+        logger.info(`Project Version: ${config.project_version.toString()}`)
+        return config;
+    } catch (e) {
+        logger.error(e)
+        return writeToConfigFile()
+    }
 }

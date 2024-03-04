@@ -28,7 +28,8 @@ export default class Main {
             height: height,
             webPreferences: {
                 preload: path.join(__dirname, 'preload.js'),
-                nodeIntegration: true
+                nodeIntegration: true,
+                nodeIntegrationInWorker: true,
             }
         })
 

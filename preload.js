@@ -29,7 +29,10 @@ window.addEventListener('DOMContentLoaded', () => {
 
     replaceText('total-mods', 'This is a test!')
 
-    const modpackVersion = getConfigFile().project_version//.toString()
+    const modpackVersion = getConfigFile().project_version.toString()
+
+    if (modpackVersion === undefined) logger.warn("Something went wrong when attempting to get the config file...")
+
     logger.info(`Modpack version: ${modpackVersion}`)
 
     replaceText('modpack-version', modpackVersion)
