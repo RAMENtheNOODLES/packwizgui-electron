@@ -1,8 +1,8 @@
-const { format, transports } = require('winston')
-const winston = require('winston')
+import {format, Logger, transports} from 'winston'
+import winston from 'winston'
 
-function createNewLogger(context = "root", parent = "", level = "info") {
-    const combinedContext = `${(parent !== "") ? parent + ":" : ""}${context}`
+export function createNewLogger(context = "root", parent = "", level = "info"): Logger {
+    const combinedContext: string = `${(parent !== "") ? parent + ":" : ""}${context}`
 
     const logger = winston.loggers.add(context, {
         level: level,
@@ -38,8 +38,4 @@ function createNewLogger(context = "root", parent = "", level = "info") {
     }
 
     return logger
-}
-
-module.exports = {
-    createNewLogger,
 }

@@ -4,6 +4,8 @@ const { FuseV1Options, FuseVersion } = require('@electron/fuses');
 module.exports = {
   packagerConfig: {
     asar: true,
+    platform: ['linux', 'win32'],
+    arch: 'all',
   },
   rebuildConfig: {},
   makers: [
@@ -17,6 +19,7 @@ module.exports = {
     },
     {
       name: '@electron-forge/maker-deb',
+      platforms: ['linux'],
       config: {
         options: {
           maintainer: 'CookieJAR499',
@@ -26,6 +29,7 @@ module.exports = {
     },
     {
       name: '@electron-forge/maker-rpm',
+      platforms: ['linux'],
       config: {
         options: {
           homepage: 'https://packwizgui.cookiejar499.me'
@@ -50,4 +54,17 @@ module.exports = {
       [FuseV1Options.OnlyLoadAppFromAsar]: true,
     }),
   ],
+  publishers: [
+    {
+      name: '@electron-forge/publisher-github',
+      config: {
+        repository: {
+          owner: 'RAMENtheNOODLES',
+          name: 'packwizgui-electron'
+        },
+        draft: true,
+        prerelease: true
+      }
+    }
+  ]
 };

@@ -1,4 +1,5 @@
 const { contextBridge, ipcRenderer } = require('electron')
+const getConfigFile = require("./utils/config-parser");
 
 contextBridge.exposeInMainWorld('versions', {
     node: () => process.versions.node,
@@ -27,6 +28,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     replaceText('total-mods', 'This is a test!')
+    replaceText('modpack-version', getConfigFile().project_version.toString())
 
     //loadInnerHTML('table-page', 'table.html', 'Mods')
 })
