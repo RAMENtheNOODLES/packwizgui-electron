@@ -1,5 +1,4 @@
-const { createNewLogger } = require('./utils/logger')
-const logger = createNewLogger('renderer', 'root')
+const logger = require('./utils/logger').createNewLogger('renderer', 'root')
 
 const func = async () => {
     const response = await window.versions.ping()
