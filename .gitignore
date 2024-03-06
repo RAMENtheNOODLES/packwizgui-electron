@@ -1,4 +1,5 @@
-packwiz-gui-config.toml
+packwiz-gui-config.json
+index.json
 # Logs
 logs
 *.log

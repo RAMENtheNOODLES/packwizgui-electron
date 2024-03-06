@@ -1,10 +1,12 @@
 import { app, BrowserWindow, ipcMain , screen} from 'electron'
+import * as PackUtil from './utils/packwiz-utils'
+
 const logger = require('./utils/logger').createNewLogger()
 
 if (require('electron-squirrel-startup')) app.quit()
 
 //@ts-nocheck
-const path = require('node:path')
+import path from 'node:path'
 
 import { showNotification } from './utils/notification_engine'
 
@@ -22,7 +24,7 @@ export default class Main {
     }
 
     private static createWindow(width: number, height: number) {
-        logger.info(`Preload path: ${path.join(__dirname, 'preload.js')}`)
+        logger.debug(`Preload path: ${path.join(__dirname, 'preload.js')}`)
         Main.mainWindow = new Main.BrowserWindow({
             width: width,
             height: height,
@@ -33,7 +35,7 @@ export default class Main {
             }
         })
 
-        Main.mainWindow.loadFile('index.html')
+        Main.mainWindow.loadFile('index.html').then(_ => logger.info('Index.html loaded!'))
     }
 
     private static handleSetStatus(_event: any, status: boolean) {
@@ -43,6 +45,10 @@ export default class Main {
         if (!Main.OnlineStatus) {
             showNotification("Warning", "You are not connected to the internet! Don't expect this to work!")
         }
+    }
+
+    private static handleAddNewMod(_event: any) {
+        logger.info('Adding a new mod!')
     }
 
     private static onReady() {
@@ -67,6 +73,10 @@ export default class Main {
         })
 
         ipcMain.on('status', Main.handleSetStatus)
+
+        let Mods = new PackUtil.Mods()
+        Mods.fillFromModsFolder()
+        Mods.index()
     }
 
     static main(app: Electron.App, browserWindow: typeof BrowserWindow) {

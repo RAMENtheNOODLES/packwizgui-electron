@@ -2,16 +2,16 @@ import fs from 'node:fs'
 
 const logger = require('./logger').createNewLogger('config-parser')
 
-export const configFileName = "packwiz-gui-config.toml"
+export const configFileName = "packwiz-gui-config.json"
 
 export class SemanticVersioning {
-    major: number;
-    minor: number;
-    patch: number;
+    major?: number;
+    minor?: number;
+    patch?: number;
     prerelease: string;
     build: string;
 
-    constructor(major: number, minor: number, patch: number, prerelease: string = "", build: string = "") {
+    constructor(major?: number, minor?: number, patch?: number, prerelease: string = "", build: string = "") {
         this.major = major;
         this.minor = minor;
         this.patch = patch;
@@ -26,6 +26,14 @@ export class SemanticVersioning {
         if (this.build !== "") version += `+${this.build}`
 
         return version;
+    }
+
+    toJSONString() {
+        return JSON.stringify(this)
+    }
+
+    static fromJSON(d: Object): SemanticVersioning {
+        return Object.assign(new SemanticVersioning(), d)
     }
 
     static fromString(str: string) {
@@ -90,6 +98,7 @@ export class ConfigFile {
     project_dir: string;
     packwiz_exe_file: string;
     project_version: SemanticVersioning;
+    mods_dir: string;
 
     constructor();
     constructor(project_dir: string, packwiz_exe_file: string);
@@ -98,11 +107,22 @@ export class ConfigFile {
         this.project_dir = project_dir;
         this.packwiz_exe_file = packwiz_exe_file;
         this.project_version = project_version ? project_version : new SemanticVersioning(0, 0, 1);
+        this.mods_dir = project_dir + "\\mods"
+    }
+
+    write() {
+        writeToConfigFile(this)
     }
 
     toString(): string {
-        return `project_dir = '${this.project_dir}'\npackwiz_exe_file = '${this.packwiz_exe_file}'`
-            + `\nproject_version = '${this.project_version.toString()}'`;
+        return JSON.stringify(this, undefined, 4)
+    }
+
+    static fromJSON(d: Object): ConfigFile {
+        let o = Object.assign(new ConfigFile(), d)
+        o.project_version = SemanticVersioning.fromJSON(o['project_version'])
+        o.mods_dir = o.project_dir + "\\mods"
+        return o
     }
 
     static fromString(str: string): ConfigFile {
@@ -142,14 +162,12 @@ export function getConfigFile(): ConfigFile|undefined {
     try {
         const data = fs.readFileSync(`./${configFileName}`, 'utf-8')
 
-        logger.info(`Config file data: ${data}`)
+        let config: ConfigFile = ConfigFile.fromJSON(JSON.parse(data));
+        logger.debug(`Project Dir: ${config.project_dir}`)
+        logger.debug(`Packwiz file: ${config.packwiz_exe_file}`)
+        logger.debug(`Project Version: ${config.project_version.toString()}`)
 
-        logger.debug(data)
-
-        let config: ConfigFile = ConfigFile.fromString(data);
-        logger.info(`Project Dir: ${config.project_dir}`)
-        logger.info(`Packwiz file: ${config.packwiz_exe_file}`)
-        logger.info(`Project Version: ${config.project_version.toString()}`)
+        logger.info('Successfully loaded the config!')
         return config;
     } catch (e) {
         logger.error(e)

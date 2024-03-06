@@ -34,6 +34,7 @@ export function createNewLogger(context = "root", parent = "", level = "info"): 
             format: format.combine(
                 format.cli()
             ),
+            level: 'debug'
         }))
     }
 
