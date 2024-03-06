@@ -1,16 +1,20 @@
 import fs from 'node:fs'
-import {getConfigFile} from "./config-parser";
+import {getConfigFile, writeToConfigFile} from "./config-parser";
 import toml from 'toml'
 const logger = require('./logger').createNewLogger('packwiz-utils')
 
 const INDEX_FILE_NAME = "index.json"
 
 export function getAllModIndexFiles(folder: string) {
-    let files: string[] = fs.readdirSync(folder)
     let out: string[] = []
-    for (let i = 0; i < files.length; i++) {
-        logger.debug(`Index file (${i}): ${files[i]}`)
-        out.push(files[i])
+    try {
+        let files: string[] = fs.readdirSync(folder)
+        for (let i = 0; i < files.length; i++) {
+            logger.debug(`Index file (${i}): ${files[i]}`)
+            out.push(files[i])
+        }
+    } catch (e: any) {
+        logger.error(e)
     }
 
     return out
@@ -45,7 +49,8 @@ export class Mod {
                 `<td>${this.Title}</td>` +
                 `<td>${this.Author}</td>` +
                 `<td>${this.Description}</td>` +
-                `<td>N/A</td></tr>`
+                `<td>N/A</td>` +
+                `<td>Button</td></tr>`
     }
 
     static fromJSON(d: Object): Mod {
@@ -101,8 +106,20 @@ export class Mods {
     }
 
     fillFromModsFolder() {
-        const MODS_DIR = getConfigFile()?.mods_dir
+        const CONFIG_FILE = getConfigFile()
+        const MODS_DIR = CONFIG_FILE?.mods_dir
         const mods = getAllModIndexFiles(<string>MODS_DIR)
+
+        logger.debug(`Mods length: ${mods.length}`)
+
+        if (mods.length == 0) {
+            // @ts-ignore
+            if (CONFIG_FILE) {
+                CONFIG_FILE.mods_dir = CONFIG_FILE.project_dir + "\\mods"
+                writeToConfigFile(CONFIG_FILE)
+            }
+        }
+
         logger.debug(`Mods: ${mods}`)
         for (const mod in mods) {
             this.TotalMods += 1
