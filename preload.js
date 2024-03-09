@@ -3,6 +3,13 @@ const { getConfigFile } = require("./utils/config-parser");
 const { getTotalIndexedMods, Mods} = require('./utils/packwiz-utils')
 const logger = require('./utils/logger').createNewLogger('preload', 'main')
 
+const CONFIG = getConfigFile()
+
+const MODS = Mods.getFromIndex()
+const MODS_TABLE = MODS.toHTMLTable()
+
+const TOTAL_MODS = getTotalIndexedMods()
+
 contextBridge.exposeInMainWorld('versions', {
     node: () => process.versions.node,
     chrome: () => process.versions.chrome,
@@ -21,11 +28,7 @@ contextBridge.exposeInMainWorld('packwizgui', {
 window.addEventListener('DOMContentLoaded', () => {
     logger.debug("In preload.js");
 
-    const CONFIG = getConfigFile()
-    const TOTAL_MODS = getTotalIndexedMods()
-    const MODS = new Mods()
     MODS.fillFromModsFolder()
-    const MODS_TABLE = MODS.toHTMLTable()
 
     const replaceText = (selector, text) => {
         logger.info(`Replacing element: ${selector}'s text with ${text}`)

@@ -1,5 +1,6 @@
 import { app, BrowserWindow, ipcMain , screen} from 'electron'
 import * as PackUtil from './utils/packwiz-utils'
+import { WebUtils } from './utils/web-utils'
 
 const logger = require('./utils/logger').createNewLogger()
 
@@ -72,11 +73,16 @@ export default class Main {
             if (BrowserWindow.getAllWindows().length === 0) Main.createWindow(width, height)
         })
 
+        //let webUtils = new WebUtils()
+        //let result: PackUtil.Mods = webUtils.searchForMods()
+
+        //logger.debug(`Result: ${result}`)
+
         ipcMain.on('status', Main.handleSetStatus)
 
-        let Mods = new PackUtil.Mods()
-        Mods.fillFromModsFolder()
-        Mods.index()
+        //let Mods = PackUtil.Mods.getFromIndex()
+        //Mods.fillFromModsFolder()
+        //Mods.index()
     }
 
     static main(app: Electron.App, browserWindow: typeof BrowserWindow) {

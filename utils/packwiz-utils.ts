@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import {getConfigFile, writeToConfigFile} from "./config-parser";
 import toml from 'toml'
+import {WebUtils} from "./web-utils";
 const logger = require('./logger').createNewLogger('packwiz-utils')
 
 const INDEX_FILE_NAME = "index.json"
@@ -53,8 +54,30 @@ export class Mod {
                 `<td>Button</td></tr>`
     }
 
+    getMissingInfo(): Mod {
+        const WEB_UTILS = new WebUtils()
+        WEB_UTILS.lookupModrinthMod(<string>this.ModID)
+            .then((mod) => {
+                this.Slug = mod.Slug
+                this.Author = mod.Author
+                this.Description = mod.Description
+            })
+            .catch((error) => logger.error(`Error trying to lookup mod: ${this.ModID}`, error))
+
+        return this
+    }
+
     static fromJSON(d: Object): Mod {
         return Object.assign(new Mod(), d)
+    }
+
+    mergeMissingInfo(mod: Mod) {
+        if (!this.Slug)
+            this.Slug = mod.Slug
+        if (!this.Author)
+            this.Author = mod.Author
+        if (!this.Description)
+            this.Description = mod.Description
     }
 
     static fromTOML(t: any): Mod {
@@ -78,10 +101,12 @@ export class Mods {
     Mods: { [id: string] : Mod }
     private TotalMods: number = 0
     private HTML_TABLE: string = ""
+    files: string[] = []
 
     constructor()
-    constructor(Mods: { [id: string] : Mod } = {}) {
+    constructor(Mods: { [id: string] : Mod } = {}, files: string[] = []) {
         this.Mods = Mods
+        this.files = files
     }
 
     private readFromFile(file: string) {
@@ -97,6 +122,24 @@ export class Mods {
         return Object.assign(new Mods(), d)
     }
 
+    addMod(mod: Mod) {
+        if (mod.Title)
+            this.Mods[mod.Title] = mod;
+    }
+
+    addMods(mods: Mod[]) {
+        for (let i = 0; i < mods.length; i++) {
+            this.addMod(mods[i])
+        }
+    }
+
+    removeMod(mod: Mod) {
+        if (mod.Title) {
+            // @ts-ignore
+            this.Mods[mod.Title] = null
+        }
+    }
+
     getTotalMods(): number {
         return this.TotalMods
     }
@@ -105,12 +148,29 @@ export class Mods {
         fs.writeFileSync(INDEX_FILE_NAME, this.toString())
     }
 
+    static getFromIndex(): Mods {
+        let out = new Mods()
+        try {
+            out = Mods.fromString(JSON.parse(fs.readFileSync(INDEX_FILE_NAME).toString()))
+        }
+        catch (error) {
+            logger.error("Error trying to get mods from index!", error)
+
+            out.index()
+            out.fillFromModsFolder()
+        }
+
+        return out
+
+    }
+
     fillFromModsFolder() {
         const CONFIG_FILE = getConfigFile()
         const MODS_DIR = CONFIG_FILE?.mods_dir
         const mods = getAllModIndexFiles(<string>MODS_DIR)
 
         logger.debug(`Mods length: ${mods.length}`)
+        this.TotalMods = mods.length
 
         if (mods.length == 0) {
             // @ts-ignore
@@ -122,20 +182,31 @@ export class Mods {
 
         logger.debug(`Mods: ${mods}`)
         for (const mod in mods) {
-            this.TotalMods += 1
-            if (mods[mod].includes(".jar")) {
+            if (this.files.includes(mods[mod])) {
+                logger.debug(`Skipping: ${mod}`)
                 continue
             }
+            else if (mods[mod].includes(".jar")) {
+                //this.TotalMods += 1
+                continue
+            }
+            logger.debug(`Adding: ${mods[mod]}`)
+            //this.TotalMods += 1
 
             try {
                 let newMod = Mod.fromTOML(toml.parse(this.readFromFile(`${MODS_DIR}\\${mods[mod]}`)));
+                newMod.getMissingInfo()
+
                 this.Mods[<string>newMod.Title] = newMod
+                this.files.push(mods[mod])
                 this.HTML_TABLE += newMod.toHTML()
             } catch (e: any) {
                 logger.error("Parsing error on line " + e.line + ", column " + e.column +
                     ": " + e.message);
             }
         }
+
+        this.index()
     }
 
     toHTMLTable(): string {
