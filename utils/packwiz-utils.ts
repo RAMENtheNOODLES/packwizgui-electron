@@ -45,13 +45,13 @@ export class Mod {
     }
 
     toHTML() {
-        return  `<tr><td>${this.ModID}</td>` +
+        return  `<tr id="MOD:${this.ModID}"><td>${this.ModID}</td>` +
                 `<td>${this.Slug}</td>` +
                 `<td>${this.Title}</td>` +
                 `<td>${this.Author}</td>` +
                 `<td>${this.Description}</td>` +
                 `<td>N/A</td>` +
-                `<td>Button</td></tr>`
+                `<td><button class="btn btn-primary" id="REMOVE-MOD-${this.ModID}" type="button" aria-label="Remove Mod">-</button></td></tr>`
     }
 
     getMissingInfo(): Mod {
@@ -123,18 +123,22 @@ export class Mods {
     }
 
     addMod(mod: Mod) {
-        if (mod.Title)
+        if (mod.Title) {
+            this.TotalMods += 1
             this.Mods[mod.Title] = mod;
+        }
     }
 
     addMods(mods: Mod[]) {
         for (let i = 0; i < mods.length; i++) {
             this.addMod(mods[i])
+            this.TotalMods += 1
         }
     }
 
     removeMod(mod: Mod) {
         if (mod.Title) {
+            this.TotalMods -= 1
             // @ts-ignore
             this.Mods[mod.Title] = null
         }
@@ -144,8 +148,53 @@ export class Mods {
         return this.TotalMods
     }
 
+    getAllModIds(): string[] {
+        let out: string[] = []
+        for (let i = 0; i < this.TotalMods; i++) {
+            try {
+                const mod = this.Mods[Object.keys(this.Mods)[i]]
+                out.push(<string>mod.ModID)
+            }
+            catch (error) {
+                logger.error(`Error trying to get the mod: ${this.Mods[Object.keys(this.Mods)[i]]}`, error)
+            }
+        }
+
+        return out
+    }
+
     index() {
         fs.writeFileSync(INDEX_FILE_NAME, this.toString())
+    }
+
+    getModFromID(modID: string): Mod {
+        for (let i = 0; i < this.TotalMods; i++) {
+            try {
+                const mod = this.Mods[Object.keys(this.Mods)[i]]
+                if (mod.ModID == modID)
+                    return mod
+            }
+            catch (error) {
+                logger.error(`Error trying to get the mod: ${this.Mods[Object.keys(this.Mods)[i]]}`, error)
+            }
+        }
+
+        return new Mod()
+    }
+
+    getModTitleFromID(modID: string): string {
+        for (let i = 0; i < this.TotalMods; i++) {
+            try {
+                const mod = this.Mods[Object.keys(this.Mods)[i]]
+                if (mod.ModID == modID)
+                    return <string>mod.Title
+            }
+            catch (error) {
+                logger.error(`Error trying to get the mod: ${this.Mods[Object.keys(this.Mods)[i]].ModID}`, error)
+            }
+        }
+
+        return ""
     }
 
     static getFromIndex(): Mods {
@@ -162,6 +211,20 @@ export class Mods {
 
         return out
 
+    }
+
+    refreshModHTMLTable() {
+        this.HTML_TABLE = ""
+        for (let i = 0; i < this.TotalMods; i++) {
+            try {
+                let mod = this.Mods[Object.keys(this.Mods)[i]]
+                logger.debug(`Mod: ${mod.ModID}`)
+                this.HTML_TABLE += mod.toHTML()
+            }
+            catch (error) {
+                logger.error(`Error trying to get the mod: ${this.Mods[Object.keys(this.Mods)[i]].ModID}`, error)
+            }
+        }
     }
 
     fillFromModsFolder() {

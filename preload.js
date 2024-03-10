@@ -61,4 +61,22 @@ window.addEventListener('DOMContentLoaded', () => {
 
     replaceText('modpack-version', modpackVersion)
     replaceInnerHTML('dataTableBody', MODS_TABLE)
+
+    document.querySelector("#refresh-btn-1").addEventListener('click', () => {
+        MODS.refreshModHTMLTable();
+    })
+
+    const MOD_IDS = MODS.getAllModIds()
+
+    for (let i = 0; i < MOD_IDS.length; i++) {
+        logger.debug(`Mod ID: ${MOD_IDS[i]} at index ${i}`)
+        document.querySelector(`#REMOVE-MOD-${MOD_IDS[i]}`).addEventListener('click', () => {
+            logger.info(`Removing mod: ${MOD_IDS[i]}`)
+            MODS.removeMod(MODS.getModFromID(MOD_IDS[i]))
+        })
+    }
+    MODS.refreshModHTMLTable()
+
+    replaceInnerHTML('dataTableBody', MODS.toHTMLTable())
+    MODS.index()
 })

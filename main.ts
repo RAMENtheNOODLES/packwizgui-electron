@@ -66,6 +66,7 @@ export default class Main {
         const { width, height } = primaryDisplay.workAreaSize
 
         ipcMain.handle('ping', () => 'pong')
+        ipcMain.on('addNewMod', Main.handleAddNewMod)
 
         Main.createWindow(width, height)
 
