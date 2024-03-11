@@ -1,6 +1,6 @@
 import { app, BrowserWindow, ipcMain , screen} from 'electron'
-import * as PackUtil from './utils/packwiz-utils'
-import { WebUtils } from './utils/web-utils'
+//import * as PackUtil from './utils/packwiz-utils'
+//import { WebUtils } from './utils/web-utils'
 
 const logger = require('./utils/logger').createNewLogger()
 
@@ -40,10 +40,11 @@ export default class Main {
     }
 
     private static handleSetStatus(_event: any, status: boolean) {
-        logger.info(`Status: ${status ? "online" : "offline"}`)
+        //logger.info(`Status: ${status ? "online" : "offline"}`)
         Main.OnlineStatus = status
 
-        if (!Main.OnlineStatus) {
+        if (!status) {
+            logger.warn('You are not connected to the internet! Don\'t expect this to work!')
             showNotification("Warning", "You are not connected to the internet! Don't expect this to work!")
         }
     }

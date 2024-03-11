@@ -11,6 +11,14 @@ export class SemanticVersioning {
     prerelease: string;
     build: string;
 
+    /**
+     * Creates a new SemanticVersioning object
+     * @param major The major version (x in x.y.z)
+     * @param minor The minor version (y in x.y.z)
+     * @param patch The patch version (z in x.y.z)
+     * @param prerelease The prerelease version (alpha, beta, etc.)
+     * @param build The build version (build number, etc.)
+     */
     constructor(major?: number, minor?: number, patch?: number, prerelease: string = "", build: string = "") {
         this.major = major;
         this.minor = minor;
@@ -19,6 +27,10 @@ export class SemanticVersioning {
         this.build = build;
     }
 
+    /**
+     * Outputs the version as a string
+     * @see fromString
+     */
     toString(): string {
         let version: string = `${this.major}.${this.minor}.${this.patch}`
 
@@ -32,10 +44,20 @@ export class SemanticVersioning {
         return JSON.stringify(this)
     }
 
+    /**
+     * Takes in a JSON object and outputs a SemanticVersioning object
+     * @param d The JSON object
+     */
     static fromJSON(d: Object): SemanticVersioning {
         return Object.assign(new SemanticVersioning(), d)
     }
 
+    /**
+     * Takes in a version string and outputs a SemanticVersioning object
+     * @param str The version string
+     * @returns A SemanticVersioning object
+     * @see toString
+     */
     static fromString(str: string) {
         const dot = "."
         let major: string = "";
@@ -99,25 +121,39 @@ export class ConfigFile {
     packwiz_exe_file: string;
     project_version: SemanticVersioning;
     mods_dir: string;
+    project_name: string;
 
     constructor();
     constructor(project_dir: string, packwiz_exe_file: string);
     constructor(project_dir: string, packwiz_exe_file:string, project_version: SemanticVersioning)
-    constructor(project_dir = "", packwiz_exe_file = "", project_version?: SemanticVersioning) {
+    constructor(project_dir = "", packwiz_exe_file = "", project_version?: SemanticVersioning, project_name = "") {
         this.project_dir = project_dir;
         this.packwiz_exe_file = packwiz_exe_file;
         this.project_version = project_version ? project_version : new SemanticVersioning(0, 0, 1);
         this.mods_dir = project_dir + "\\mods"
+        this.project_name = project_name
     }
 
+    /**
+     * Writes the config file to the disk
+     */
     write() {
+        this.mods_dir = this.project_dir + "\\mods"
         writeToConfigFile(this)
     }
 
+    /**
+     * Outputs the config file as a string
+     */
     toString(): string {
         return JSON.stringify(this, undefined, 4)
     }
 
+    /**
+     * Takes in a JSON object and outputs a ConfigFile object
+     * @param d The JSON object
+     * @see toString
+     */
     static fromJSON(d: Object): ConfigFile {
         let o = Object.assign(new ConfigFile(), d)
         o.project_version = SemanticVersioning.fromJSON(o['project_version'])
@@ -125,6 +161,20 @@ export class ConfigFile {
         return o
     }
 
+    static getPackwizExeFile(): string {
+        return getConfigFile().packwiz_exe_file
+    }
+
+    static getProjectDir(): string {
+        return getConfigFile().project_dir
+    }
+
+    /**
+     * Takes in a string and outputs a ConfigFile object
+     * @param str The string
+     * @returns A ConfigFile object
+     * @see toString
+     */
     static fromString(str: string): ConfigFile {
         const sep = ' = '
         let project_dir: string;
@@ -143,13 +193,24 @@ export class ConfigFile {
     }
 }
 
+/**
+ * @overload
+ */
+/**
+ * @overload
+ * @param config The config file
+ */
+/**
+ * Writes the config file to the disk
+ * @returns The config file
+ */
 export function writeToConfigFile(): ConfigFile;
 export function writeToConfigFile(config: ConfigFile): ConfigFile;
 export function writeToConfigFile(config: ConfigFile = new ConfigFile()): ConfigFile {
     try {
         fs.writeFileSync(`./${configFileName}`,
             config.toString(),
-            {flag: 'w'})
+            {flag: 'w+'})
         logger.info("Successfully wrote to the config file!")
     } catch (e) {
         logger.error(e);
@@ -158,7 +219,11 @@ export function writeToConfigFile(config: ConfigFile = new ConfigFile()): Config
     return config;
 }
 
-export function getConfigFile(): ConfigFile|undefined {
+/**
+ * Reads the config file from the disk
+ * @returns The config file
+ */
+export function getConfigFile(): ConfigFile {
     try {
         const data = fs.readFileSync(`./${configFileName}`, 'utf-8')
 

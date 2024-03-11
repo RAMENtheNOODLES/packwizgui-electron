@@ -33,19 +33,6 @@ export class ModrinthMod {
     }
 }
 
-export class ModrinthMods {
-    hits?: ModrinthMod
-
-    constructor()
-    constructor(hits?: ModrinthMod) {
-        this.hits = hits
-    }
-
-    static fromJSON(d: Object): ModrinthMods {
-        return Object.assign(new ModrinthMods(), d)
-    }
-}
-
 export class CurseForgeMod {
     id: number
     name: string
@@ -66,18 +53,5 @@ export class CurseForgeMod {
 
     toMod() {
         return new Mod(this.id.toString(), this.slug, this.name, "", this.summary)
-    }
-}
-
-export class CurseForgeMods {
-    hits?: CurseForgeMod
-
-    constructor()
-    constructor(hits?: CurseForgeMod) {
-        this.hits = hits
-    }
-
-    static fromJSON(d: Object): CurseForgeMods {
-        return Object.assign(new CurseForgeMods(), d)
     }
 }

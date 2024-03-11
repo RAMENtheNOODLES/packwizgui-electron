@@ -1,4 +1,3 @@
-import * as http from "http"
 import axios from 'axios'
 import {Mod, Mods} from "./packwiz-utils"
 import {CurseForgeMod, ModrinthMod} from "./ModTypes";
@@ -137,17 +136,18 @@ export class WebUtils {
         return out
     }
 
-    searchForMods(SearchQuery: string = "", Limit = 10, Offset = 0) {
+    async searchForMods(SearchQuery: string = "", Limit = 10, Offset = 0) {
         // search for mods from both providers
         let out: Mods = new Mods()
 
-        Promise.all([this.searchForModrinthMods(SearchQuery, Limit, Offset), this.searchForCurseForgeMods(SearchQuery, Limit, Offset)])
-            .then((values) => {
-                out.addMods(values[0])
-                out.addMods(values[1])
-            })
-            .finally(() => logger.debug(`All Mods: ${out.toString()}`))
+        await this.searchForModrinthMods(SearchQuery, Limit, Offset).then((value) => {
+            out.addModsAsync(value).then(() => out.refreshModHTMLTable(true))
+        })
+        await this.searchForCurseForgeMods(SearchQuery, Limit, Offset).then((value) => {
+            out.addModsAsync(value).then(() => out.refreshModHTMLTable(true))
+        })
 
+        logger.debug(`All Mods: ${out.toString()}`)
         return out
     }
 }

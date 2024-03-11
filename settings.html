@@ -10,34 +10,33 @@
     <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css">
     <link rel="stylesheet" href="assets/fonts/font-awesome.min.css">
     <link rel="stylesheet" href="assets/fonts/fontawesome5-overrides.min.css">
-<script src="./renderer.js"></script>
+    <script src="./renderer.js"></script>
 </head>
 
 <body id="page-top">
     <div id="wrapper">
         <nav class="navbar align-items-start sidebar sidebar-dark accordion bg-gradient-primary p-0 navbar-dark">
             <div class="container-fluid d-flex flex-column p-0"><a class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="#">
-                    <div class="sidebar-brand-icon rotate-n-15"><i class="fas fa-laugh-wink"></i></div>
+                    <!--div class="sidebar-brand-icon rotate-n-15"><i class="fas fa-laugh-wink"></i></div-->
                     <div class="sidebar-brand-text mx-3"><span>PackwizGUI</span></div>
                 </a>
                 <hr class="sidebar-divider my-0">
                 <ul class="navbar-nav text-light" id="accordionSidebar">
                     <li class="nav-item"><a class="nav-link" href="index.html"><i class="fas fa-tachometer-alt"></i><span>Overview</span></a></li>
                     <li class="nav-item"><a class="nav-link active" href="settings.html"><i class="fa fa-cog"></i><span>Settings</span></a></li>
-                    <li class="nav-item"></li>
                 </ul>
-                <div class="text-center d-none d-md-inline"><button class="btn rounded-circle border-0" id="sidebarToggle" type="button"></button></div>
+                <!--div class="text-center d-none d-md-inline"><button class="btn rounded-circle border-0" id="sidebarToggle" type="button"></button></div-->
             </div>
         </nav>
         <div class="d-flex flex-column" id="content-wrapper">
             <div id="content">
                 <nav class="navbar navbar-expand bg-white shadow mb-4 topbar static-top navbar-light">
                     <div class="container-fluid"><button class="btn btn-link d-md-none rounded-circle me-3" id="sidebarToggleTop" type="button"><i class="fas fa-bars"></i></button>
-                        <form class="d-none d-sm-inline-block me-auto ms-md-3 my-2 my-md-0 mw-100 navbar-search">
+                        <!--form class="d-none d-sm-inline-block me-auto ms-md-3 my-2 my-md-0 mw-100 navbar-search">
                             <div class="input-group"><input class="bg-light form-control border-0 small" type="text" placeholder="Search for ..."><button class="btn btn-primary py-0" type="button"><i class="fas fa-search"></i></button></div>
-                        </form>
+                        </form-->
                         <ul class="navbar-nav flex-nowrap ms-auto">
-                            <li class="nav-item dropdown d-sm-none no-arrow"><a class="dropdown-toggle nav-link" aria-expanded="false" data-bs-toggle="dropdown" href="#"><i class="fas fa-search"></i></a>
+                            <!--li class="nav-item dropdown d-sm-none no-arrow"><a class="dropdown-toggle nav-link" aria-expanded="false" data-bs-toggle="dropdown" href="#"><i class="fas fa-search"></i></a>
                                 <div class="dropdown-menu dropdown-menu-end p-3 animated--grow-in" aria-labelledby="searchDropdown">
                                     <form class="me-auto navbar-search w-100">
                                         <div class="input-group"><input class="bg-light form-control border-0 small" type="text" placeholder="Search for ...">
@@ -45,8 +44,8 @@
                                         </div>
                                     </form>
                                 </div>
-                            </li>
-                            <li class="nav-item dropdown no-arrow mx-1">
+                            </li-->
+                            <!--li class="nav-item dropdown no-arrow mx-1">
                                 <div class="nav-item dropdown no-arrow"><a class="dropdown-toggle nav-link" aria-expanded="false" data-bs-toggle="dropdown" href="#"><span class="badge bg-danger badge-counter" id="notification-badge">3+</span><i class="fas fa-bell fa-fw"></i></a>
                                     <div class="dropdown-menu dropdown-menu-end dropdown-list animated--grow-in">
                                         <h6 class="dropdown-header">alerts center</h6><a class="dropdown-item d-flex align-items-center" href="#">
@@ -73,10 +72,10 @@
                                         </a><a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
                                     </div>
                                 </div>
-                            </li>
-                            <div class="d-none d-sm-block topbar-divider"></div>
+                            </li-->
+                            <!--div class="d-none d-sm-block topbar-divider"></div-->
                             <li class="nav-item dropdown no-arrow">
-                                <div class="nav-item dropdown no-arrow"><a class="dropdown-toggle nav-link" aria-expanded="false" data-bs-toggle="dropdown" href="#"><span class="d-none d-lg-inline me-2 text-gray-600 small">Modpack Name</span></a>
+                                <div class="nav-item dropdown no-arrow"><a class="dropdown-toggle nav-link" aria-expanded="false" data-bs-toggle="dropdown" href="#"><span class="d-none d-lg-inline me-2 text-gray-600 small" id="modpack-name-dropdown">Modpack Name</span></a>
                                     <div class="dropdown-menu shadow dropdown-menu-end animated--grow-in"><a class="dropdown-item" href="index.html"><i class="fas fa-tachometer-alt" style="opacity: 0.50;"></i>&nbsp; &nbsp;Overview</a><a class="dropdown-item" href="settings.html"><i class="fas fa-cogs fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Settings</a></div>
                                 </div>
                             </li>
@@ -124,29 +123,28 @@
                                             <p class="text-primary m-0 fw-bold">Project Settings</p>
                                         </div>
                                         <div class="card-body">
-                                            <form>
+                                            <form action="">
                                                 <div class="row">
                                                     <div class="col">
-                                                        <div class="mb-3"><label class="form-label" for="username"><strong>Modpack Name</strong></label><input class="form-control" type="text" id="username" placeholder="Modpack Name" name="modpack-name" required=""></div>
+                                                        <div class="mb-3"><label class="form-label" for="modpack-name"><strong>Modpack Name</strong></label><input class="form-control" type="text" id="modpack-name" placeholder="Modpack Name" name="modpack-name" required=""></div>
                                                     </div>
                                                     <div class="col">
-                                                        <div class="mb-3"><label class="form-label" for="first_name"><strong>Packwiz File Location</strong></label><input class="form-control" type="text" id="first_name" placeholder="Directory/To/Packwiz/File/Location" name="packwiz_file"><button class="btn btn-primary btn-sm" id="open-file-btn" type="button" style="margin-top: 4px;">Open File</button></div>
+                                                        <div class="mb-3"><label class="form-label" for="packwiz-file-loc"><strong>Packwiz File Location</strong></label><input class="form-control" type="file" id="packwiz-file-loc" accept=".exe" placeholder="Directory/To/Packwiz/File/Location" name="packwiz_file" required=""></div>
                                                     </div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col">
-                                                        <div class="mb-3"><label class="form-label" for="last_name"><strong>Modpack</strong>&nbsp;Version</label><input class="form-control" type="text" id="last_name" placeholder="0.0.0" name="Modpack Version" pattern="[0-9](.[0-9])?(.[0-9])?" minlength="1" required=""></div>
+                                                        <div class="mb-3"><label class="form-label" for="modpack-version"><strong>Modpack</strong>&nbsp;Version</label><input class="form-control" type="text" id="modpack-version" placeholder="0.0.0" name="Modpack Version" pattern="[0-9](.[0-9])?(.[0-9])?" minlength="1" required=""></div>
                                                     </div>
                                                     <div class="col">
-                                                        <div class="mb-3"><label class="form-label" for="email"><strong>Project Directory</strong></label><input class="form-control" type="text" id="project-directory" placeholder="Path/To/Project/Directory" name="project_directory"><!-- Start: Open Directory Button --><button class="btn btn-primary btn-sm" id="open-directory-btn" type="button" style="margin-top: 4px;">Open Directory</button><!-- End: Open Directory Button -->
-                                                        </div>
+                                                        <div class="mb-3"><label class="form-label" for="project-directory"><strong>Project Directory</strong></label><input class="form-control" type="file" id="project-directory" webkitdirectory="true" placeholder="Path/To/Project/Directory" name="project_directory" required=""></div>
                                                     </div>
                                                 </div>
-                                                <div class="mb-3"><button class="btn btn-primary btn-sm" type="submit">Save Settings</button></div>
+                                                <div class="mb-3"><button class="btn btn-primary btn-sm" id="save-settings-btn" type="submit">Save Settings</button></div>
                                             </form>
                                         </div>
                                     </div>
-                                    <div class="card shadow">
+                                    <div class="card shadow" hidden="hidden">
                                         <div class="card-header py-3">
                                             <p class="text-primary m-0 fw-bold">Contact Settings</p>
                                         </div>
