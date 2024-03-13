@@ -6,6 +6,7 @@ name: Node.js CI
 on:
   release:
     types: [published]
+  workflow_dispatch: null
 
 jobs:
   build:
@@ -25,6 +26,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: npm ci
+    - run: npm run build
     - run: npm run make
     - name: Archive production artifacts
       uses: actions/upload-artifact@v4
