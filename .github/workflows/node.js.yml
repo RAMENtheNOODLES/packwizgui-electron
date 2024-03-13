@@ -7,8 +7,34 @@ on:
   release:
     types: [published]
   workflow_dispatch: null
+  push:
+    branches:
+      - master
 
 jobs:
+  build-macos:
+    runs-on: macos-latest
+
+    strategy:
+      matrix:
+        node-version: [20.11.1]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - run: npm ci
+    - run: npm run build
+    - run: npm run make
+    - name: Archive production artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: macos
+        path: out
   build-windows:
     runs-on: windows-latest
 
