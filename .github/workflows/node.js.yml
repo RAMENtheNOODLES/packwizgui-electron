@@ -12,11 +12,11 @@ on:
       - master
 
 jobs:
-  build-macos:
-    runs-on: macos-latest
-
+  build:
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
         node-version: [20.11.1]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
@@ -27,57 +27,13 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+    - name: install npm dependencies
     - run: npm ci
+    - name: build typescript files into javascript
     - run: npm run build
     - run: npm run make
     - name: Archive production artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: macos
-        path: out
-  build-windows:
-    runs-on: windows-latest
-
-    strategy:
-      matrix:
-        node-version: [20.11.1]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
-    steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm ci
-    - run: npm run build
-    - run: npm run make
-    - name: Archive production artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: windows
-        path: out
-  build-ubuntu:
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [20.11.1]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
-    steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm ci
-    - run: npm run build
-    - run: npm run make
-    - name: Archive production artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: ubuntu
+        name: ${{ RUNNER_OS }}-${{ GITHUB_RUN_NUMBER}}
         path: out
