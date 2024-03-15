@@ -4,6 +4,7 @@ import {CurseForgeMod, ModrinthMod} from "./ModTypes";
 const logger = require('./logger').createNewLogger('web-utils')
 
 const CURSEFORGE_API_KEY: string = "JDJhJDEwJGNCWTRncy5tUkVWRHNyT3J6dG0uV083MEgvTzhTM211ZXhlNDBZcDlHcFpwSlQzc2ozRTFp"
+const DOPPLER_SERVICE_KEY: string = "ZHAuc3QucHJkLnBJYzNKUVdHT2RBdWR2WHk5YkwyaEttRmtTMFd5YVd1R0NPb2l5Y1JlbDY="
 
 const HEADERS = {
     'HTTP-Axios-Headers': 'RAMENtheNOODLES/PackwizGUI (contact@cookiejar499.me)',

@@ -145,6 +145,10 @@ export module CLI_UTILS {
         return ""
     }
 
+    export function getDopplerKey(token: string): string {
+        return ""
+    }
+
     export function commandBuilder(command: string) {
         return `"${PACKWIZ_EXE}" ${command}`
     }
